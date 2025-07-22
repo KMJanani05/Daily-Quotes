@@ -1,3 +1,185 @@
 # Daily-Quotes
 This is a simple web project that shows daily motivational quotes. The quotes are in simple English so new learners can easily understand.
 <img width="1910" height="599" alt="screenshot-1753208278106" src="https://github.com/user-attachments/assets/15d8df72-b5d5-4f05-9e7c-ab6a06045a97" />
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Daily Quote</title>
+    <style>
+        body {
+            background: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 40px;
+        }
+        .datetime {
+            color: #00ffcc;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        .quote-box {
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            box-shadow: 0 0 20px #00ffcc88, 0 0 10px #ff00ff55;
+            border: 2px solid #00ffcc;
+            display: inline-block;
+            max-width: 90%;
+        }
+        .quote {
+            font-size: 26px;
+            color: #00e5ff;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .author {
+            font-size: 18px;
+            color: #ffa726;
+        }
+        .closing-message {
+            margin-top: 40px;
+            font-size: 20px;
+            color: #00ff99;
+        }
+    </style>
+</head>
+<body>
+
+<div class="datetime" id="datetime"></div>
+
+<div class="quote-box">
+    <div class="quote" id="quote"></div>
+    <div class="author" id="author"></div>
+</div>
+
+<div class="closing-message" id="closing"></div>
+
+<script>
+    const quotes = [
+        ["Always try your best.", "Unknown"],
+        ["Be kind to everyone.", "Unknown"],
+        ["Mistakes help you learn.", "Unknown"],
+        ["Believe in yourself.", "Unknown"],
+        ["Small steps make big changes.", "Unknown"],
+        ["Stay strong when it's hard.", "Unknown"],
+        ["Learn something new today.", "Unknown"],
+        ["Good things take time.", "Unknown"],
+        ["Your time will come.", "Unknown"],
+        ["Be happy with what you have.", "Unknown"],
+        ["Work hard and be honest.", "Unknown"],
+        ["Never give up.", "Unknown"],
+        ["A smile can change your day.", "Unknown"],
+        ["Keep moving forward.", "Unknown"],
+        ["Do good things every day.", "Unknown"],
+        ["Every day is a new chance.", "Unknown"],
+        ["Help others when you can.", "Unknown"],
+        ["Dream big, start small.", "Unknown"],
+        ["Stay positive and strong.", "Unknown"],
+        ["Do your best, forget the rest.", "Unknown"],
+        ["Believe you can and you're halfway there.", "Theodore Roosevelt"],
+        ["Push yourself, because no one else is going to do it for you.", "Unknown"],
+        ["Dream it. Wish it. Do it.", "Unknown"],
+        ["Success doesn’t just find you. You have to go out and get it.", "Unknown"],
+        ["Don’t stop when you’re tired. Stop when you’re done.", "Unknown"],
+        ["Wake up with determination. Go to bed with satisfaction.", "Unknown"],
+        ["Great things never come from comfort zones.", "Unknown"],
+        ["Hardships often prepare ordinary people for an extraordinary destiny.", "C.S. Lewis"],
+        ["Do something today that your future self will thank you for.", "Unknown"],
+        ["Quality means doing it right when no one is looking.", "Henry Ford"],
+        ["The best revenge is massive success.", "Frank Sinatra"],
+        ["Act as if what you do makes a difference. It does.", "William James"],
+        ["Success usually comes to those who are too busy to be looking for it.", "Henry David Thoreau"],
+        ["Don’t watch the clock; do what it does. Keep going.", "Sam Levenson"],
+        ["It always seems impossible until it's done.", "Nelson Mandela"],
+        ["You miss 100% of the shots you don’t take.", "Wayne Gretzky"],
+        ["Perseverance is not a long race; it's many short races one after the other.", "Walter Elliot"],
+        ["The harder you work for something, the greater you’ll feel when you achieve it.", "Unknown"],
+        ["Little minds are tamed and subdued by misfortune; great minds rise above it.", "Washington Irving"],
+        ["Be so good they can't ignore you.", "Steve Martin"],
+        ["If you’re going through hell, keep going.", "Winston Churchill"],
+        ["Start where you are. Use what you have. Do what you can.", "Arthur Ashe"],
+        ["All our dreams can come true if we have the courage to pursue them.", "Walt Disney"],
+        ["The future belongs to those who believe in the beauty of their dreams.", "Eleanor Roosevelt"],
+        ["Don't limit your challenges. Challenge your limits.", "Unknown"],
+        ["Success is not final, failure is not fatal: It is the courage to continue that counts.", "Winston Churchill"],
+        ["Be fearless in the pursuit of what sets your soul on fire.", "Jennifer Lee"],
+        ["What you get by achieving your goals is not as important as what you become by achieving your goals.", "Zig Ziglar"],
+        ["The secret of getting ahead is getting started.", "Mark Twain"],
+        ["Turn your wounds into wisdom.", "Oprah Winfrey"],
+        ["The best way to predict your future is to create it.", "Abraham Lincoln"],
+        ["Your time is limited, don’t waste it living someone else’s life.", "Steve Jobs"]
+    ];
+
+    const closings = [
+        "Have a happy day!",
+        "Enjoy your day!",
+        "Stay positive!",
+        "Keep smiling today!",
+        "Make today special!",
+        "Be kind and stay strong!",
+        "Good luck today!",
+        "Take it easy and shine!",
+        "Be your best today!",
+        "Stay calm and happy!"
+    ];
+    
+    function formatDateTime() {
+        const now = new Date();
+        const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        const datePart = now.toLocaleDateString(undefined, dateOptions);
+
+        let hours = now.getHours();
+        let minutes = now.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // 12-hour format
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+
+        const timePart = hours + ':' + minutes + ' ' + ampm;
+
+        return datePart + " | " + timePart;
+    }
+
+    function updateDateTime() {
+        document.getElementById("datetime").innerText = formatDateTime();
+    }
+
+    function getDailyIndex(str, total) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash += str.charCodeAt(i);
+        }
+        return hash % total;
+    }
+
+    function showQuote() {
+        const today = new Date();
+        const dateStr = today.toISOString().slice(0,10).replace(/-/g, '');
+        const dailyIndex = getDailyIndex(dateStr, quotes.length);
+        const closingIndex = getDailyIndex(dateStr, closings.length);
+
+        const isDaily = Math.random() < 0.5;
+        let quoteIndex = isDaily ? dailyIndex : Math.floor(Math.random() * quotes.length);
+
+        const quote = quotes[quoteIndex][0];
+        const author = quotes[quoteIndex][1];
+
+        document.getElementById("quote").innerText = '"' + quote + '"';
+        document.getElementById("author").innerText = (author !== "Unknown") ? "- " + author : "";
+        document.getElementById("closing").innerText = closings[closingIndex];
+    }
+
+    showQuote();
+    updateDateTime();
+    setInterval(updateDateTime, 60000); // Update time every minute
+</script>
+
+</body>
+</html>
+
